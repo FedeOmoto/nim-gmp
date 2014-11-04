@@ -64,7 +64,7 @@ type
   MP_RAT* = mm_mpq_struct
   #mpq_t* = array[1, mm_mpq_struct]
   mpq_t* = mm_mpq_struct
-  mm_mpf_struct* {.importc: "mm_mpf_struct", header: "<gmp.h>".} = object 
+  mm_mpf_struct* {.importc: "__mpf_struct", header: "<gmp.h>".} = object 
     mp_prec* {.importc: "_mp_prec".}: cint
     mp_size* {.importc: "_mp_size".}: cint
     mp_exp* {.importc: "_mp_exp".}: mp_exp_t
@@ -73,7 +73,7 @@ type
   #mpf_t* = array[1, mm_mpf_struct]
   mpf_t* = mm_mpf_struct
   gmp_randalg_t* = distinct cint
-  mm_gmp_randstate_struct* {.importc: "mm_gmp_randstate_struct", header: "<gmp.h>".} = object 
+  mm_gmp_randstate_struct* {.importc: "__gmp_randstate_struct", header: "<gmp.h>".} = object 
     mp_seed* {.importc: "_mp_seed".}: mpz_t
     mp_alg* {.importc: "_mp_alg".}: gmp_randalg_t
     mp_algdata* {.importc: "_mp_algdata".}: INNER_C_UNION_5532179898798000430
