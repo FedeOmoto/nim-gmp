@@ -36,10 +36,20 @@ proc toMpz(a: var mpf_t): mpz_t =
   mpz_set_f(result.addr, a.addr)
 
 proc toMpz(a: clong): mpz_t =
-  mpz_init_set_si(result.addr,a)  
-  
+  mpz_init_set_si(result.addr,a)
+
 proc init_mpz_t*(val: clong): mpz_t =
   mpz_init_set_si(result.addr,val)
+  
+proc new_mpz_t*(val: clong): ref mpz_t =
+  new(result,finalise)
+  mpz_init_set_si(result[].addr,val)
+  
+template mpz_p*(a: clong{lit}): mpz_ptr =
+  # weird interaction with destructor, so use new for now
+  # should stay alive whilst in scope, hence inject
+  var temp {.genSym, inject.} = new_mpz_t(a)
+  temp[].addr    
   
 proc new_mpz_t*(enc: string, base: cint = 10): ref mpz_t =
   new(result,finalise)
@@ -82,6 +92,7 @@ proc `$`*(a: ptr mpz_t, base: cint = 10): string =
   return $mpz_get_str(result,base,a)
   
 proc copy*(a: var mpz_t): mpz_t =
+  ## you must use this function in instead of assignment
   mpz_set(result.addr,a.addr)
   return result
   
@@ -93,6 +104,9 @@ proc destroy*(a: var mpz_t) {.destructor.} =
 ################################################################################
 # multi-precision floats
 ################################################################################
+
+proc finalise(a: ref mpf_t) =
+  mpf_clear(a[].addr)
 
 proc init_mpf_t*(): mpf_t =
   mpf_init(result.addr)
@@ -127,11 +141,20 @@ proc init_mpf_t*(enc: string, base: cint = 10): mpf_t =
 proc init_mpf_t*(val: float): mpf_t =
   mpf_init_set_d(result.addr,val)
   
+proc new_mpf_t*(val: float): ref mpf_t =
+  new(result,finalise)
+  mpf_init_set_d(result[].addr,val)
+  
 proc init_mpf_t*(val: clong): mpf_t =
   mpf_init_set_si(result.addr,val)
   
 proc toMpf*(a: float): mpf_t =
   result = init_mpf_t(a)
+  
+template mpf_p*(a: float{lit}): mpf_ptr =
+  # inject so it is finalised when goes out of scope
+  var temp {.genSym, inject.} = new_mpf_t(a)
+  temp[].addr    
   
 proc toMpf*(a: var mpz_t): mpf_t =
   result = init_mpf_t()
@@ -144,18 +167,46 @@ converter convert*(a: float): mpf_t =
   a.toMpf
 
 proc copy*(a: var mpf_t): mpf_t =
+  ## you must use this function instead of assignment
   mpf_set(result.addr,a.addr)
-  return result 
-  
+  return result
+
+template toFloatHelper(result: expr, tooSmall: stmt, tooLarge: stmt) =
+  # WARNING: depends on system specific behaviour: on what systems does
+  # this change?
+  # should check this fits
+  result = mpf_get_d(a.addr)
+  if result == 0.0 and mpf_cmp_d(a.addr,0.0) != 0:
+    tooSmall
+  if result == Inf:
+    tooLarge 
+
+proc toFloat*(a: var mpf_t): float =
+  toFloatHelper(result) 
+    do: raise newException(ValueError, "number too small"):
+        raise newException(ValueError, "number too large")
+
 proc `$`*(a: var mpf_t, base: cint = 10, n_digits = 10): string =
+  var outOfRange = false
+  var floatVal: float
+  
+  #May have to remove this due to system specific behaviour
+  toFloatHelper(floatVal) 
+    do: outOfRange = true:
+        outOfRange = true
+  
+  # case: fits in float      
+  if base == 10 and not outOfRange:
+    return $floatVal
+  
   var exp: mp_exp_t
   # +1 for possible minus sign
   var str = newString(n_digits + 1)
   let coeff = $mpf_get_str(str,exp.addr,base,n_digits,a.addr)
-  if (exp > 0):
+  if (exp != 0):
     return coeff & "e" & $exp
   if coeff == "":
-    return "0"
+    return "0.0"
   result = coeff
   
 proc `==`*(a,b: var mpf_t): bool =
@@ -202,7 +253,7 @@ when isMainModule:
   proc testFloatConv =
     var t = 123.456.toMpf
     #echo 123.4.mpf_t # converter doesn't work
-    assert ($t == "123456e3")
+    assert ($t == "123.456")
   
   proc testToPtr =
     var t: mpz_t = 0
@@ -212,10 +263,50 @@ when isMainModule:
     var f: mpf_t = 0.0
     var f2: mpf_t = 5.0
     mpf_add(f,f2,f)
-    assert ($f == "5e1")
+    assert ($f == "5.0")
+
+  proc testToFloat =
+  
+    var tooSmall = false
+    try:
+      var f = init_mpf_t("1e-11043")
+      discard f.toFloat()
+    except:
+      var e = getCurrentException()
+      assert e of ValueError
+      tooSmall = true 
+    assert(tooSmall)
+    
+    var tooLarge = false
+    try:
+      var f = init_mpf_t("1e1104367")
+      echo f.toFloat()
+    except:
+      var e = getCurrentException()
+      assert e of ValueError
+      tooLarge = true     
+    assert(tooLarge)
+    
+    # check we don't get an excpetion in the case of zero
+    var f = init_mpf_t(0.0)
+    discard f.toFloat()
+
+  proc testLiteralHelpers =
+    # test should stay alive whilst in scope
+    let test = mpz_p(123)
+    GC_fullcollect()
+    assert($test == "123")
+    
+    var res: mpz_t = init_mpz_t(0)
+    mpz_add(res.addr,mpz_p(5),mpz_p(19))
+    
+    # a bit clunky 
+    assert res == mpz_p(24)[]
     
     
   testEq()
   testAlloc()
   testFloatConv()
-  testToPtr()  
+  testToPtr()
+  testToFloat()
+  testLiteralHelpers()
