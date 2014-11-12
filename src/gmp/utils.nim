@@ -1,6 +1,9 @@
 import gmp
 import math
 
+{.deadCodeElim: on.}
+{.push hints: off.}
+
 ################################################################################
 # multi-precision ints
 ################################################################################
@@ -231,7 +234,9 @@ proc destroy*(a: var mpf_t) {.destructor.} =
 converter convert*(a: mpz_t): mpf_t =
   result = init_mpf()
   mpf_set_z(result,a)
-  
+
+{.pop.}
+
 when isMainModule:
   proc testEq() =
     var t1 = new(mpz_t)
