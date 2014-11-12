@@ -7,24 +7,24 @@ import math
 
 
 proc finalise(a: ref mpz_t) =
-  mpz_clear(a[].addr)
+  mpz_clear(a[])
  
 proc new_mpz_t*(): ref mpz_t =
   new(result,finalise)
-  mpz_init(result[].addr)
+  mpz_init(result[])
   
 proc init_mpz_t*(): mpz_t =
-  mpz_init(result.addr)
+  mpz_init(result)
 
 #converter toPtr*(a: var mpz_t): ptr mpz_t =
 #  a.addr
   
 proc init_mpz_t*(enc: string, base: cint = 10): mpz_t =
-  if mpz_init_set_str(result.addr,enc, base) != 0:
+  if mpz_init_set_str(result,enc, base) != 0:
     raise newException(ValueError,enc & " represents an invalid value") 
     
 converter convert*(a: clong): mpz_t =
-  mpz_init_set_si(result.addr,a)
+  mpz_init_set_si(result,a)
 
 converter convert*(a: mpf_t): mpz_t =
   result = init_mpz_t()
@@ -52,7 +52,7 @@ template mpz_p*(a: clong{lit}): mpz_ptr {.deprecated.} =
   
 proc new_mpz_t*(enc: string, base: cint = 10): ref mpz_t =
   new(result,finalise)
-  if mpz_init_set_str(result[].addr,enc, base) != 0: 
+  if mpz_init_set_str(result[],enc, base) != 0: 
     raise newException(ValueError,enc & " represents an invalid value")
 
 #NOTE: default params don't work with static 
@@ -205,7 +205,7 @@ proc `$`*(a: mpf_t, base: cint = 10, n_digits = 10): string =
   var exp: mp_exp_t
   # +1 for possible minus sign
   var str = newString(n_digits + 1)
-  let coeff = $mpf_get_str(str,exp.addr,base,n_digits,a)
+  let coeff = $mpf_get_str(str,exp,base,n_digits,a)
   if (exp != 0):
     return coeff & "e" & $exp
   if coeff == "":

@@ -923,7 +923,7 @@ proc mpf_get_si*(a2: mpf_t): clong {.importc: "mpf_get_si", header: "<gmp.h>".}
 proc mpf_get_str*(a2: cstring; a3: ptr mp_exp_t; a4: cint; a5: csize; 
                   a6: mpf_srcptr): cstring {.importc: "mpf_get_str", 
     header: "<gmp.h>".}
-proc mpf_get_str*(a2: cstring; a3: ptr mp_exp_t; a4: cint; a5: csize; a6: mpf_t): cstring {.
+proc mpf_get_str*(a2: cstring; a3: var mp_exp_t; a4: cint; a5: csize; a6: mpf_t): cstring {.
     importc: "mpf_get_str", header: "<gmp.h>".}
 proc mpf_get_ui*(a2: mpf_srcptr): culong {.importc: "mpf_get_ui", 
     header: "<gmp.h>".}
