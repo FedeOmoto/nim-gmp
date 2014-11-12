@@ -32,9 +32,8 @@
 ## idenitifers starting with _ have been changed to start with m_
 ## struct members starting with _ , no longer start with _
 
-#FIXME: add other OSs
-when defined(Posix):
-  {.passl: "-lgmp".}
+#FIXME: other OSes need include path?
+{.passl: "-lgmp".}
 
 type 
   INNER_C_UNION_5532179898798000430* {.importc: "no_name", header: "<gmp.h>".} = object  {.
