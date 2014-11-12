@@ -2,7 +2,7 @@ import macros
 import strutils
 import tables
 
-const file = "src/gmp/header.nim"
+const file = "gmp.nim"
 const dynlib = "libgmp"
 let symbols {.compileTime.} = gorge("nm -A -D /usr/lib/libgmp.so")
 var libFuncs {.compileTime.} = newSeq[string]() # stores gmp dll function names
@@ -201,8 +201,8 @@ macro print(): stmt =
     result.add newCall("echo", child.toStrLit)        
 
 
-#fix_types()  
-#fix_importc()
+fix_types()  
+fix_importc()
 nimify_params()
 print()
 
