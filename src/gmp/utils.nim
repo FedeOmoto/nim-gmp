@@ -16,8 +16,8 @@ proc new_mpz_t*(): ref mpz_t =
 proc init_mpz_t*(): mpz_t =
   mpz_init(result.addr)
 
-converter toPtr*(a: var mpz_t): ptr mpz_t =
-  a.addr
+#converter toPtr*(a: var mpz_t): ptr mpz_t =
+#  a.addr
   
 proc init_mpz_t*(enc: string, base: cint = 10): mpz_t =
   if mpz_init_set_str(result.addr,enc, base) != 0:
@@ -27,25 +27,24 @@ converter convert*(a: clong): mpz_t =
   mpz_init_set_si(result.addr,a)
 
 converter convert*(a: mpf_t): mpz_t =
-  var temp = a
   result = init_mpz_t()
-  mpz_set_f(result.addr, temp.addr)
+  mpz_set_f(result, a)
 
-proc toMpz(a: var mpf_t): mpz_t =
+proc to_mpz(a: mpf_t): mpz_t =
   result = init_mpz_t()
-  mpz_set_f(result.addr, a.addr)
+  mpz_set_f(result, a)
 
-proc toMpz(a: clong): mpz_t =
-  mpz_init_set_si(result.addr,a)
+proc to_mpz(a: clong): mpz_t =
+  mpz_init_set_si(result,a)
 
 proc init_mpz_t*(val: clong): mpz_t =
-  mpz_init_set_si(result.addr,val)
+  mpz_init_set_si(result,val)
   
 proc new_mpz_t*(val: clong): ref mpz_t =
   new(result,finalise)
-  mpz_init_set_si(result[].addr,val)
+  mpz_init_set_si(result[],val)
   
-template mpz_p*(a: clong{lit}): mpz_ptr =
+template mpz_p*(a: clong{lit}): mpz_ptr {.deprecated.} =
   # weird interaction with destructor, so use new for now
   # should stay alive whilst in scope, hence inject
   var temp = new_mpz_t(a)
@@ -73,35 +72,35 @@ proc dealloc_mpz_t*(a: ptr mpz_t, shared: static[bool]) =
   else:
     dealloc(a)
 
-proc `==`*(a,b: var mpz_t): bool =
-  return mpz_cmp(a.addr,b.addr) == 0
+proc `==`*(a,b: mpz_t): bool =
+  return mpz_cmp(a,b) == 0
   
-proc `<`*(a,b: var mpz_t): bool =
-  return mpz_cmp(a.addr,b.addr) < 0
+proc `<`*(a,b: mpz_t): bool =
+  return mpz_cmp(a,b) < 0
 
-proc `<=`*(a,b: var mpz_t): bool =
-  let t = mpz_cmp(a.addr,b.addr)
+proc `<=`*(a,b: mpz_t): bool =
+  let t = mpz_cmp(a,b)
   t < 0 or t == 0
 
-proc cmp*(a,b: var mpz_t): int =
-  return mpz_cmp(a.addr,b.addr)  
+proc cmp*(a,b: mpz_t): int =
+  return mpz_cmp(a,b)  
 
-proc `$`*(a: var mpz_t, base: cint = 10): string =
-  result = newString(mpz_sizeinbase(a.addr, base) + 1)
-  return $mpz_get_str(result,base,a.addr)
+proc `$`*(a: mpz_t, base: cint = 10): string =
+  result = newString(mpz_sizeinbase(a, base) + 1)
+  return $mpz_get_str(result,base,a)
   
 proc `$`*(a: ptr mpz_t, base: cint = 10): string =
   result = newString(mpz_sizeinbase(a, base) + 1)
   return $mpz_get_str(result,base,a)
   
-proc copy*(a: var mpz_t): mpz_t =
+proc copy*(a: mpz_t): mpz_t =
   ## you must use this function in instead of assignment
-  mpz_set(result.addr,a.addr)
+  mpz_set(result,a)
   return result
   
 # careful when copying values!!!
 proc destroy*(a: var mpz_t) {.destructor.} =
-  mpz_clear(a.addr)
+  mpz_clear(a)
 
 
 ################################################################################
@@ -109,10 +108,10 @@ proc destroy*(a: var mpz_t) {.destructor.} =
 ################################################################################
 
 proc finalise(a: ref mpf_t) =
-  mpf_clear(a[].addr)
+  mpf_clear(a[])
 
 proc init_mpf_t*(): mpf_t =
-  mpf_init(result.addr)
+  mpf_init(result)
   
 proc init_mpf_t*(enc: string, base: cint = 10): mpf_t =
   ## Set the value of rop from the string in str. The string is of the form ‘M@N’
@@ -136,50 +135,51 @@ proc init_mpf_t*(enc: string, base: cint = 10): mpf_t =
   ## White space is allowed in the string, and is simply ignored. [This is not really 
   ## true; white-space is ignored in the beginning of the string and within the 
   ## mantissa, but not in  other places, such as after a minus sign or in the exponent. 
-  if mpf_init_set_str(result.addr,enc,base) != 0:
+  if mpf_init_set_str(result,enc,base) != 0:
     # have to free memory even on failure
-    mpf_clear(result.addr)
+    mpf_clear(result)
     raise newException(ValueError,enc & " represents an invalid value")
     
 proc init_mpf_t*(val: float): mpf_t =
-  mpf_init_set_d(result.addr,val)
+  mpf_init_set_d(result,val)
   
 proc new_mpf_t*(val: float): ref mpf_t =
   new(result,finalise)
-  mpf_init_set_d(result[].addr,val)
+  mpf_init_set_d(result[],val)
   
 proc init_mpf_t*(val: clong): mpf_t =
-  mpf_init_set_si(result.addr,val)
+  mpf_init_set_si(result,val)
   
-proc toMpf*(a: float): mpf_t =
+proc to_mpf*(a: float): mpf_t =
   result = init_mpf_t(a)
   
-template mpf_p*(a: float{lit}): mpf_ptr =
+template mpf_p*(a: float{lit}): mpf_ptr  {.deprecated.} =
+  ## no longer used now we have nimified function params
   # inject so it is finalised when goes out of scope
   var temp = new_mpf_t(a)
   temp[].addr    
   
-proc toMpf*(a: var mpz_t): mpf_t =
+proc to_mpf*(a: mpz_t): mpf_t =
   result = init_mpf_t()
-  mpf_set_z(result.addr,a.addr)
+  mpf_set_z(result,a)
   
-converter toPtr*(a: var mpf_t): ptr mpf_t =
-  a.addr
+#converter toPtr*(a: var mpf_t): ptr mpf_t =
+#  a.addr
   
 converter convert*(a: float): mpf_t =
   a.toMpf
 
-proc copy*(a: var mpf_t): mpf_t =
+proc copy*(a: mpf_t): mpf_t =
   ## you must use this function instead of assignment
-  mpf_set(result.addr,a.addr)
+  mpf_set(result,a)
   return result
 
 template toFloatHelper(result: expr, tooSmall: stmt, tooLarge: stmt) =
   # WARNING: depends on system specific behaviour: on what systems does
   # this change?
   # should check this fits
-  result = mpf_get_d(a.addr)
-  if result == 0.0 and mpf_cmp_d(a.addr,0.0) != 0:
+  result = mpf_get_d(a)
+  if result == 0.0 and mpf_cmp_d(a,0.0) != 0:
     tooSmall
   if result == Inf:
     tooLarge 
@@ -189,7 +189,7 @@ proc toFloat*(a: var mpf_t): float =
     do: raise newException(ValueError, "number too small"):
         raise newException(ValueError, "number too large")
 
-proc `$`*(a: var mpf_t, base: cint = 10, n_digits = 10): string =
+proc `$`*(a: mpf_t, base: cint = 10, n_digits = 10): string =
   var outOfRange = false
   var floatVal: float
   
@@ -205,33 +205,32 @@ proc `$`*(a: var mpf_t, base: cint = 10, n_digits = 10): string =
   var exp: mp_exp_t
   # +1 for possible minus sign
   var str = newString(n_digits + 1)
-  let coeff = $mpf_get_str(str,exp.addr,base,n_digits,a.addr)
+  let coeff = $mpf_get_str(str,exp.addr,base,n_digits,a)
   if (exp != 0):
     return coeff & "e" & $exp
   if coeff == "":
     return "0.0"
   result = coeff
   
-proc `==`*(a,b: var mpf_t): bool =
-  return mpf_cmp(a.addr,b.addr) == 0
+proc `==`*(a,b: mpf_t): bool =
+  return mpf_cmp(a,b) == 0
   
-proc `<`*(a,b: var mpf_t): bool =
-  return mpf_cmp(a.addr,b.addr) < 0
+proc `<`*(a,b: mpf_t): bool =
+  return mpf_cmp(a,b) < 0
 
-proc `<=`*(a,b: var mpf_t): bool =
-  let t = mpf_cmp(a.addr,b.addr)
+proc `<=`*(a,b: mpf_t): bool =
+  let t = mpf_cmp(a,b)
   t < 0 or t == 0
 
-proc cmp*(a,b: var mpf_t): int =
-  return mpf_cmp(a.addr,b.addr)
+proc cmp*(a,b: mpf_t): int =
+  return mpf_cmp(a,b)
   
 proc destroy*(a: var mpf_t) {.destructor.} =
-  mpf_clear(a.addr)
+  mpf_clear(a)
   
 converter convert*(a: mpz_t): mpf_t =
   result = init_mpf_t()
-  var temp = a
-  mpf_set_z(result.addr,temp.addr)
+  mpf_set_z(result,a)
   
 when isMainModule:
   proc testEq() =
