@@ -33,11 +33,11 @@ converter convert*(a: mpf_t): mpz_t =
   result = init_mpz()
   mpz_set_f(result, a)
 
-proc to_mpz(a: mpf_t): mpz_t =
+proc to_mpz*(a: mpf_t): mpz_t =
   result = init_mpz()
   mpz_set_f(result, a)
 
-proc to_mpz(a: clong): mpz_t =
+proc to_mpz*(a: clong): mpz_t =
   mpz_init_set_si(result,a)
 
 proc init_mpz*(val: clong): mpz_t =
