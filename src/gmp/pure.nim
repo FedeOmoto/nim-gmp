@@ -1,3 +1,11 @@
+#
+# Nim GMP wrapper 
+# (c) Copyright 2014 Will Szumski
+#
+# See the file "COPYING", included in this
+# distribution, for details about the copyright.
+#
+
 {.deadCodeElim: on.}
 
 when defined(windows):
