@@ -1,3 +1,7 @@
+## WARNING: This example is not friendly on the eyes and should
+## probably be ignored. It was used to test basic functionality of
+## the wrapper
+
 import gmp
 
 var
