@@ -1,9 +1,9 @@
 [Package]
 name          = "nim-gmp"
-version       = "0.1.1"
+version       = "0.2.0"
 author        = "Will Szumski"
 description   = "Wrapper for the GNU Multiple Precision Arithmetic Library (GMP)"
-license       = "GNU LGPL v3"
+license       = "MIT"
 srcDir        = "src"
 InstallExt    = "nim"
 

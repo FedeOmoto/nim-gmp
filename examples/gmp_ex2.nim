@@ -5,9 +5,9 @@
 import gmp
 import gmp/utils
 
-var res = init_mpz_t() # initialized to zero
-let x: mpz_t = 10 # convert int to mpz_t
-let y = init_mpz_t("15",10) # construct from string (base: 10)
+var res = init_mpz() # initialized to zero
+let x: mpz = 10 # convert int to mpz_t
+let y = init_mpz("15",10) # construct from string (base: 10)
 
 mpz_add(res,x,y)
 

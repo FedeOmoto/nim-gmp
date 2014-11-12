@@ -59,6 +59,9 @@ type
   mpf_ptr* = ptr mm_mpf_struct
   mpq_srcptr* = ptr mm_mpq_struct
   mpq_ptr* = ptr mm_mpq_struct
+  
+include extratypes
+
 const 
   GMP_RAND_ALG_DEFAULT: gmp_randalg_t = 0.gmp_randalg_t
   GMP_RAND_ALG_LC: gmp_randalg_t = GMP_RAND_ALG_DEFAULT

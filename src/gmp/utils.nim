@@ -9,17 +9,17 @@ import math
 proc finalise(a: ref mpz_t) =
   mpz_clear(a[])
  
-proc new_mpz_t*(): ref mpz_t =
+proc new_mpz*(): ref mpz_t =
   new(result,finalise)
   mpz_init(result[])
   
-proc init_mpz_t*(): mpz_t =
+proc init_mpz*(): mpz_t =
   mpz_init(result)
 
 #converter toPtr*(a: var mpz_t): ptr mpz_t =
 #  a.addr
   
-proc init_mpz_t*(enc: string, base: cint = 10): mpz_t =
+proc init_mpz*(enc: string, base: cint = 10): mpz_t =
   if mpz_init_set_str(result,enc, base) != 0:
     raise newException(ValueError,enc & " represents an invalid value") 
     
@@ -27,30 +27,30 @@ converter convert*(a: clong): mpz_t =
   mpz_init_set_si(result,a)
 
 converter convert*(a: mpf_t): mpz_t =
-  result = init_mpz_t()
+  result = init_mpz()
   mpz_set_f(result, a)
 
 proc to_mpz(a: mpf_t): mpz_t =
-  result = init_mpz_t()
+  result = init_mpz()
   mpz_set_f(result, a)
 
 proc to_mpz(a: clong): mpz_t =
   mpz_init_set_si(result,a)
 
-proc init_mpz_t*(val: clong): mpz_t =
+proc init_mpz*(val: clong): mpz_t =
   mpz_init_set_si(result,val)
   
-proc new_mpz_t*(val: clong): ref mpz_t =
+proc new_mpz*(val: clong): ref mpz_t =
   new(result,finalise)
   mpz_init_set_si(result[],val)
   
 template mpz_p*(a: clong{lit}): mpz_ptr {.deprecated.} =
   # weird interaction with destructor, so use new for now
   # should stay alive whilst in scope, hence inject
-  var temp = new_mpz_t(a)
+  var temp = new_mpz(a)
   temp[].addr    
   
-proc new_mpz_t*(enc: string, base: cint = 10): ref mpz_t =
+proc new_mpz*(enc: string, base: cint = 10): ref mpz_t =
   new(result,finalise)
   if mpz_init_set_str(result[],enc, base) != 0: 
     raise newException(ValueError,enc & " represents an invalid value")
@@ -110,10 +110,10 @@ proc destroy*(a: var mpz_t) {.destructor.} =
 proc finalise(a: ref mpf_t) =
   mpf_clear(a[])
 
-proc init_mpf_t*(): mpf_t =
+proc init_mpf*(): mpf_t =
   mpf_init(result)
   
-proc init_mpf_t*(enc: string, base: cint = 10): mpf_t =
+proc init_mpf*(enc: string, base: cint = 10): mpf_t =
   ## Set the value of rop from the string in str. The string is of the form ‘M@N’
   ## or, if the base is 10 or less, alternatively ‘MeN’. ‘M’ is the mantissa and 
   ## ‘N’ is the exponent. The # mantissa is always in the specified base. The 
@@ -140,27 +140,27 @@ proc init_mpf_t*(enc: string, base: cint = 10): mpf_t =
     mpf_clear(result)
     raise newException(ValueError,enc & " represents an invalid value")
     
-proc init_mpf_t*(val: float): mpf_t =
+proc init_mpf*(val: float): mpf_t =
   mpf_init_set_d(result,val)
   
-proc new_mpf_t*(val: float): ref mpf_t =
+proc new_mpf*(val: float): ref mpf_t =
   new(result,finalise)
   mpf_init_set_d(result[],val)
   
-proc init_mpf_t*(val: clong): mpf_t =
+proc init_mpf*(val: clong): mpf_t =
   mpf_init_set_si(result,val)
   
 proc to_mpf*(a: float): mpf_t =
-  result = init_mpf_t(a)
+  result = init_mpf(a)
   
 template mpf_p*(a: float{lit}): mpf_ptr  {.deprecated.} =
   ## no longer used now we have nimified function params
   # inject so it is finalised when goes out of scope
-  var temp = new_mpf_t(a)
+  var temp = new_mpf(a)
   temp[].addr    
   
 proc to_mpf*(a: mpz_t): mpf_t =
-  result = init_mpf_t()
+  result = init_mpf()
   mpf_set_z(result,a)
   
 #converter toPtr*(a: var mpf_t): ptr mpf_t =
@@ -229,7 +229,7 @@ proc destroy*(a: var mpf_t) {.destructor.} =
   mpf_clear(a)
   
 converter convert*(a: mpz_t): mpf_t =
-  result = init_mpf_t()
+  result = init_mpf()
   mpf_set_z(result,a)
   
 when isMainModule:
@@ -271,7 +271,7 @@ when isMainModule:
   
     var tooSmall = false
     try:
-      var f = init_mpf_t("1e-11043")
+      var f = init_mpf("1e-11043")
       discard f.toFloat()
     except:
       var e = getCurrentException()
@@ -281,7 +281,7 @@ when isMainModule:
     
     var tooLarge = false
     try:
-      var f = init_mpf_t("1e1104367")
+      var f = init_mpf("1e1104367")
       echo f.toFloat()
     except:
       var e = getCurrentException()
@@ -290,7 +290,7 @@ when isMainModule:
     assert(tooLarge)
     
     # check we don't get an excpetion in the case of zero
-    var f = init_mpf_t(0.0)
+    var f = init_mpf(0.0)
     discard f.toFloat()
 
   proc testLiteralHelpers =
@@ -299,7 +299,7 @@ when isMainModule:
     GC_fullcollect()
     assert($test == "123")
     
-    var res: mpz_t = init_mpz_t(0)
+    var res: mpz_t = init_mpz(0)
     mpz_add(res.addr,mpz_p(5),mpz_p(19))
     
     # a bit clunky 
