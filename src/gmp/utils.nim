@@ -48,7 +48,7 @@ proc new_mpz_t*(val: clong): ref mpz_t =
 template mpz_p*(a: clong{lit}): mpz_ptr =
   # weird interaction with destructor, so use new for now
   # should stay alive whilst in scope, hence inject
-  var temp {.genSym, inject.} = new_mpz_t(a)
+  var temp = new_mpz_t(a)
   temp[].addr    
   
 proc new_mpz_t*(enc: string, base: cint = 10): ref mpz_t =
@@ -56,17 +56,20 @@ proc new_mpz_t*(enc: string, base: cint = 10): ref mpz_t =
   if mpz_init_set_str(result[].addr,enc, base) != 0: 
     raise newException(ValueError,enc & " represents an invalid value")
 
-proc alloc_mpz_t*(shared: bool = true): ptr mpz_t =
-  if shared:
-    result = cast[ptr mpz_t](allocShared(sizeof(mpz_t)))
+#NOTE: default params don't work with static 
+proc alloc_mpz_t*(shared: static[bool]): ptr mpz_t =
+  when shared:
+    #FIXME: U variant doesn't compile at the moment
+    result = createShared(mpz_t,sizeof(mpz_t))
   else:
-    result = cast[ptr mpz_t](alloc(sizeof(mpz_t)))
+    result = cast[ptr mpz_t](alloc0(sizeof(mpz_t)))
   mpz_init(result)
   
-proc dealloc_mpz_t*(a: ptr mpz_t, shared: bool = true) =
+proc dealloc_mpz_t*(a: ptr mpz_t, shared: static[bool]) =
   mpz_clear(a)
-  if shared:
-    deallocShared(a)
+  when shared:
+    # FIXME: freeShared currently bugged (won't compile)
+    discard reallocShared(a,0)
   else:
     dealloc(a)
 
@@ -153,7 +156,7 @@ proc toMpf*(a: float): mpf_t =
   
 template mpf_p*(a: float{lit}): mpf_ptr =
   # inject so it is finalised when goes out of scope
-  var temp {.genSym, inject.} = new_mpf_t(a)
+  var temp = new_mpf_t(a)
   temp[].addr    
   
 proc toMpf*(a: var mpz_t): mpf_t =
@@ -246,9 +249,9 @@ when isMainModule:
     assert t3[].cmp(t1[]) > 0
     
   proc testAlloc =
-    var t = alloc_mpz_t()
+    var t = alloc_mpz_t(true)
     assert (($t) == "0")
-    dealloc_mpz_t(t)
+    dealloc_mpz_t(t,true)
     
   proc testFloatConv =
     var t = 123.456.toMpf
@@ -303,6 +306,10 @@ when isMainModule:
     # a bit clunky 
     assert res == mpz_p(24)[]
     
+  proc oneFinaliser =
+    #TODO: should increment global count when debug mode 
+    let test = mpz_p(123)
+    GC_fullcollect()   
     
   testEq()
   testAlloc()
@@ -310,3 +317,11 @@ when isMainModule:
   testToPtr()
   testToFloat()
   testLiteralHelpers()
+  
+  GC_fullcollect() 
+  echo "before oneFinaliser"
+  oneFinaliser()
+  echo "after oneFinaliser"
+  GC_fullcollect()
+  echo "after GC_fullcollect"
+  
