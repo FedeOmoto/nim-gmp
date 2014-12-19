@@ -3,6 +3,7 @@ import math
 
 {.deadCodeElim: on.}
 {.push hints: off.}
+{.experimental.}
 
 ################################################################################
 # multi-precision ints

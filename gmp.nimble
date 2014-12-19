@@ -1,6 +1,6 @@
 [Package]
 name          = "nim-gmp"
-version       = "0.2.0"
+version       = "0.2.1"
 author        = "Will Szumski"
 description   = "Wrapper for the GNU Multiple Precision Arithmetic Library (GMP)"
 license       = "MIT"
