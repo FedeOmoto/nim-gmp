@@ -10,8 +10,6 @@ import os
 
 var 
   tmp1, tmp2, acc, den, num: mpz_t
-  
-proc putchar(c: cint): cint {.importc, header:"<stdlib.h>", cdecl.}
 
 proc extract_digit(nth: culong): culong =
   # joggling between tmp1 and tmp2, so GMP won't have to use temp buffers
@@ -54,7 +52,7 @@ proc main =
     d = extract_digit(3)
     if d != extract_digit(4):
       continue
-    discard putchar('0'.cint + d.cint)
+    stdout.write(chr(ord('0').uint64 + d))
     i.inc 
     if (i mod 10'u64).uint64 == 0'u64:  echo "\t:" & $i
     eliminate_digit(d)
