@@ -16,13 +16,13 @@ else:
   const libgmp* = "libgmp.so"
   
 type 
-  mm_gmp_randstate_algdata* {.pure, packed.} = object  {.union.}
+  mm_gmp_randstate_algdata* {.pure.} = object  {.union.}
     mp_lc*: pointer
 
   mp_limb_t* = culong
   mp_limb_signed_t* = clong
   mp_bitcnt_t* = culong
-  mm_mpz_struct* {.byref, pure, packed.} = object 
+  mm_mpz_struct* {.byref, pure.} = object 
     mp_alloc*: cint
     mp_size*: cint
     mp_d*: ptr mp_limb_t
@@ -33,13 +33,13 @@ type
   mp_srcptr* = ptr mp_limb_t
   mp_size_t* = clong
   mp_exp_t* = clong
-  mm_mpq_struct* {.byref, pure, packed.} = object 
+  mm_mpq_struct* {.byref, pure.} = object 
     mp_num*: mm_mpz_struct
     mp_den*: mm_mpz_struct
 
   MP_RAT* = mm_mpq_struct
   mpq_t* = mm_mpq_struct
-  mm_mpf_struct* {.byref, pure, packed.} = object 
+  mm_mpf_struct* {.byref, pure.} = object 
     mp_prec*: cint
     mp_size*: cint
     mp_exp*: mp_exp_t
@@ -47,7 +47,7 @@ type
 
   mpf_t* = mm_mpf_struct
   gmp_randalg_t* = distinct cint
-  mm_gmp_randstate_struct* {.pure, packed.} = object 
+  mm_gmp_randstate_struct* {.pure.} = object 
     mp_seed*: mpz_t
     mp_alg*: gmp_randalg_t
     mp_algdata*: mm_gmp_randstate_algdata
