@@ -178,29 +178,23 @@ proc copy*(a: mpf_t): mpf_t =
   mpf_set(result,a)
   return result
 
-template toFloatHelper(result: expr, tooSmall: stmt, tooLarge: stmt) =
-  # WARNING: depends on system specific behaviour: on what systems does
-  # this change?
-  # should check this fits
+proc toFloat*(a: var mpf_t): float =
   result = mpf_get_d(a)
   if result == 0.0 and mpf_cmp_d(a,0.0) != 0:
-    tooSmall
+    raise newException(ValueError, "number too small")
   if result == Inf:
-    tooLarge 
-
-proc toFloat*(a: var mpf_t): float =
-  toFloatHelper(result) 
-    do: raise newException(ValueError, "number too small"):
-        raise newException(ValueError, "number too large")
+    raise newException(ValueError, "number too large")
 
 proc `$`*(a: mpf_t, base: cint = 10, n_digits = 10): string =
   var outOfRange = false
   var floatVal: float
   
   #May have to remove this due to system specific behaviour
-  toFloatHelper(floatVal) 
-    do: outOfRange = true:
-        outOfRange = true
+  floatVal = mpf_get_d(a)
+  if floatVal == 0.0 and mpf_cmp_d(a,0.0) != 0:
+    outOfRange = true
+  if floatVal == Inf:
+    outOfRange = true
   
   # case: fits in float      
   if base == 10 and not outOfRange:
