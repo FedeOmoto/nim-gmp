@@ -272,6 +272,9 @@ proc mpz_divisible_2exp_p*(a2: mpz_t; a3: mp_bitcnt_t): cint {.
     importc: "mpz_divisible_2exp_p", header: "<gmp.h>".}
 proc mpz_dump*(a2: mpz_srcptr) {.importc: "mpz_dump", header: "<gmp.h>".}
 proc mpz_dump*(a2: mpz_t) {.importc: "mpz_dump", header: "<gmp.h>".}
+proc mpz_even_p*(a2: mpz_srcptr): cint {.importc: "mpz_even_p",
+    header: "<gmp.h>".}
+proc mpz_even_p*(a2: mpz_t): cint {.importc: "mpz_even_p", header: "<gmp.h>".}
 proc mpz_export*(a2: pointer; a3: ptr csize; a4: cint; a5: csize; a6: cint; 
                  a7: csize; a8: mpz_srcptr): pointer {.importc: "mpz_export", 
     header: "<gmp.h>".}
@@ -495,6 +498,9 @@ proc mpz_nextprime*(a2: mpz_ptr; a3: mpz_srcptr) {.importc: "mpz_nextprime",
     header: "<gmp.h>".}
 proc mpz_nextprime*(a2: var mpz_t; a3: mpz_t) {.importc: "mpz_nextprime", 
     header: "<gmp.h>".}
+proc mpz_odd_p*(a2: mpz_srcptr): cint {.importc: "mpz_odd_p",
+    header: "<gmp.h>".}
+proc mpz_odd_p*(a2: mpz_t): cint {.importc: "mpz_odd_p", header: "<gmp.h>".}
 proc mpz_out_raw*(a2: ptr FILE; a3: mpz_srcptr): csize {.importc: "mpz_out_raw", 
     header: "<gmp.h>".}
 proc mpz_out_raw*(a2: ptr FILE; a3: mpz_t): csize {.importc: "mpz_out_raw", 
