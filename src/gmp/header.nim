@@ -18,7 +18,7 @@ type
   mp_limb_t* {.importc: "mp_limb_t", nodecl.} = culong
   mp_limb_signed_t* {.importc: "mp_limb_signed_t", nodecl.} = clong
   mp_bitcnt_t* {.importc: "mp_bitcnt_t", nodecl.} = culong
-  mm_mpz_struct* {.importc: "__mpz_struct", header: "<gmp.h>".} = object 
+  mm_mpz_struct* {.byref, importc: "__mpz_struct", header: "<gmp.h>".} = object 
     mp_alloc* {.importc: "_mp_alloc".}: cint
     mp_size* {.importc: "_mp_size".}: cint
     mp_d* {.importc: "_mp_d".}: ptr mp_limb_t
@@ -30,14 +30,14 @@ type
   mp_srcptr* = ptr mp_limb_t
   mp_size_t* {.importc: "mp_size_t", nodecl.} = clong
   mp_exp_t* {.importc: "mp_exp_t", nodecl.} = clong
-  mm_mpq_struct* {.importc: "__mpq_struct", header: "<gmp.h>".} = object 
+  mm_mpq_struct* {.byref, importc: "__mpq_struct", header: "<gmp.h>".} = object 
     mp_num* {.importc: "_mp_num".}: mm_mpz_struct
     mp_den* {.importc: "_mp_den".}: mm_mpz_struct
 
   MP_RAT* = mm_mpq_struct
   #mpq_t* = array[1, mm_mpq_struct]
   mpq_t* = mm_mpq_struct
-  mm_mpf_struct* {.importc: "__mpf_struct", header: "<gmp.h>".} = object 
+  mm_mpf_struct* {.byref, importc: "__mpf_struct", header: "<gmp.h>".} = object 
     mp_prec* {.importc: "_mp_prec".}: cint
     mp_size* {.importc: "_mp_size".}: cint
     mp_exp* {.importc: "_mp_exp".}: mp_exp_t
@@ -211,13 +211,13 @@ proc mpz_cmp_d*(a2: mpz_srcptr; a3: cdouble): cint {.importc: "mpz_cmp_d",
     header: "<gmp.h>".}
 proc mpz_cmp_d*(a2: mpz_t; a3: cdouble): cint {.importc: "mpz_cmp_d", 
     header: "<gmp.h>".}
-proc m_mpz_cmp_si*(a2: mpz_srcptr; a3: clong): cint {.importc: "_mpz_cmp_si", 
+proc mpz_cmp_si*(a2: mpz_srcptr; a3: clong): cint {.importc: "_mpz_cmp_si", 
     header: "<gmp.h>".}
-proc m_mpz_cmp_si*(a2: mpz_t; a3: clong): cint {.importc: "_mpz_cmp_si", 
+proc mpz_cmp_si*(a2: mpz_t; a3: clong): cint {.importc: "_mpz_cmp_si", 
     header: "<gmp.h>".}
-proc m_mpz_cmp_ui*(a2: mpz_srcptr; a3: culong): cint {.importc: "_mpz_cmp_ui", 
+proc mpz_cmp_ui*(a2: mpz_srcptr; a3: culong): cint {.importc: "_mpz_cmp_ui", 
     header: "<gmp.h>".}
-proc m_mpz_cmp_ui*(a2: mpz_t; a3: culong): cint {.importc: "_mpz_cmp_ui", 
+proc mpz_cmp_ui*(a2: mpz_t; a3: culong): cint {.importc: "_mpz_cmp_ui", 
     header: "<gmp.h>".}
 proc mpz_cmpabs*(a2: mpz_srcptr; a3: mpz_srcptr): cint {.importc: "mpz_cmpabs", 
     header: "<gmp.h>".}
@@ -1448,6 +1448,12 @@ proc mpn_cmp*(mm_gmp_xp: mp_srcptr; mm_gmp_yp: mp_srcptr; mm_gmp_size: mp_size_t
 proc mpn_cmp*(mm_gmp_xp: var mp_limb_t; mm_gmp_yp: var mp_limb_t; 
               mm_gmp_size: mp_size_t): cint {.importc: "mpn_cmp", 
     header: "<gmp.h>".}
+proc mpz_odd_p*(a2: mpz_srcptr): cint {.importc: "mpz_odd_p",
+    header: "<gmp.h>".}
+proc mpz_odd_p*(a2: mpz_t): cint {.importc: "mpz_odd_p", header: "<gmp.h>".}
+proc mpz_even_p*(a2: mpz_srcptr): cint {.importc: "mpz_even_p",
+    header: "<gmp.h>".}
+proc mpz_even_p*(a2: mpz_t): cint {.importc: "mpz_even_p", header: "<gmp.h>".}
 const 
   GMP_ERROR_NONE* = 0
   GMP_ERROR_UNSUPPORTED_ARGUMENT* = 1

@@ -1477,6 +1477,10 @@ proc mpn_cmp*(mm_gmp_xp: mp_srcptr; mm_gmp_yp: mp_srcptr; mm_gmp_size: mp_size_t
 proc mpn_cmp*(mm_gmp_xp: var mp_limb_t; mm_gmp_yp: var mp_limb_t; 
               mm_gmp_size: mp_size_t): cint {.importc: "__gmpn_cmp", 
     dynlib: libgmp, cdecl.}
+proc mpz_odd_p*(a2: mpz_t): cint =
+  (a2.mp_size != 0).cint and (cast[ptr culong](a2.mp_d)[]).cint
+proc mpz_odd_p*(a2: mpz_srcptr): cint = mpz_odd_p(a2[])
+proc mpz_even_p*(a2: mpz_t | mpz_srcptr): cint = (not mpz_odd_p(a2).bool).cint
 const 
   GMP_ERROR_NONE* = 0
   GMP_ERROR_UNSUPPORTED_ARGUMENT* = 1
