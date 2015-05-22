@@ -1448,6 +1448,12 @@ proc mpn_cmp*(mm_gmp_xp: mp_srcptr; mm_gmp_yp: mp_srcptr; mm_gmp_size: mp_size_t
 proc mpn_cmp*(mm_gmp_xp: var mp_limb_t; mm_gmp_yp: var mp_limb_t; 
               mm_gmp_size: mp_size_t): cint {.importc: "mpn_cmp", 
     header: "<gmp.h>".}
+proc mpz_sgn*(a2: mpz_srcptr): cint {.importc: "mpz_sgn", header: "<gmp.h>".}
+proc mpz_sgn*(a2: mpz_t): cint {.importc: "mpz_sgn", header: "<gmp.h>".}
+proc mpf_sgn*(a2: mpf_srcptr): cint {.importc: "mpf_sgn", header: "<gmp.h>".}
+proc mpf_sgn*(a2: mpf_t): cint {.importc: "mpf_sgn", header: "<gmp.h>".}
+proc mpq_sgn*(a2: mpq_srcptr): cint {.importc: "mpq_sgn", header: "<gmp.h>".}
+proc mpq_sgn*(a2: mpq_t): cint {.importc: "mpq_sgn", header: "<gmp.h>".}
 proc mpz_odd_p*(a2: mpz_srcptr): cint {.importc: "mpz_odd_p",
     header: "<gmp.h>".}
 proc mpz_odd_p*(a2: mpz_t): cint {.importc: "mpz_odd_p", header: "<gmp.h>".}

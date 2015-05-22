@@ -1477,6 +1477,15 @@ proc mpn_cmp*(mm_gmp_xp: mp_srcptr; mm_gmp_yp: mp_srcptr; mm_gmp_size: mp_size_t
 proc mpn_cmp*(mm_gmp_xp: var mp_limb_t; mm_gmp_yp: var mp_limb_t; 
               mm_gmp_size: mp_size_t): cint {.importc: "__gmpn_cmp", 
     dynlib: libgmp, cdecl.}
+proc mpz_sgn*(a2: mpz_t): cint =
+  if a2.mp_size < 0: -1 else: (a2.mp_size > 0).cint
+proc mpz_sgn*(a2: mpz_srcptr): cint = mpz_sgn(a2[])
+proc mpf_sgn*(a2: mpf_t): cint =
+  if a2.mp_size < 0: -1 else: (a2.mp_size > 0).cint
+proc mpf_sgn*(a2: mpf_srcptr): cint = mpf_sgn(a2[])
+proc mpq_sgn*(a2: mpq_t): cint =
+  if a2.mp_num.mp_size < 0: -1 else: (a2.mp_num.mp_size > 0).cint
+proc mpq_sgn*(a2: mpq_srcptr): cint = mpq_sgn(a2[])
 proc mpz_odd_p*(a2: mpz_t): cint =
   (a2.mp_size != 0).cint and (cast[ptr culong](a2.mp_d)[]).cint
 proc mpz_odd_p*(a2: mpz_srcptr): cint = mpz_odd_p(a2[])
