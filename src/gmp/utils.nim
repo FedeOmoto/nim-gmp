@@ -22,13 +22,18 @@ proc init_mpz*(): mpz_t =
 
 #converter toPtr*(a: var mpz_t): ptr mpz_t =
 #  a.addr
-  
+
 proc init_mpz*(enc: string, base: cint = 10): mpz_t =
   if mpz_init_set_str(result,enc, base) != 0:
     raise newException(ValueError,enc & " represents an invalid value") 
-    
-converter convert*(a: clong): mpz_t =
-  mpz_init_set_si(result,a)
+
+converter convert*(a: int): mpz_t =
+  when sizeof(clong) != sizeof(int): # LLP64 programming model
+    mpz_init(result)
+    if a < 0: result.mp_size = -1 else: result.mp_size = 1
+    result.mp_d[] = a
+  else:
+    mpz_init_set_si(result, a)
 
 converter convert*(a: mpf_t): mpz_t =
   result = init_mpz()

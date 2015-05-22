@@ -15,8 +15,8 @@ type
     mp_lc* {.importc: "_mp_lc".}: pointer
   
   # should check limb sizes / import them directly?
-  mp_limb_t* {.importc: "mp_limb_t", nodecl.} = culong
-  mp_limb_signed_t* {.importc: "mp_limb_signed_t", nodecl.} = clong
+  mp_limb_t* {.importc: "mp_limb_t", nodecl.} = uint
+  mp_limb_signed_t* {.importc: "mp_limb_signed_t", nodecl.} = int
   mp_bitcnt_t* {.importc: "mp_bitcnt_t", nodecl.} = culong
   mm_mpz_struct* {.byref, importc: "__mpz_struct", header: "<gmp.h>".} = object 
     mp_alloc* {.importc: "_mp_alloc".}: cint
