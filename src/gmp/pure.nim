@@ -19,8 +19,8 @@ type
   mm_gmp_randstate_algdata* {.pure.} = object  {.union.}
     mp_lc*: pointer
 
-  mp_limb_t* = culong
-  mp_limb_signed_t* = clong
+  mp_limb_t* = uint
+  mp_limb_signed_t* = int
   mp_bitcnt_t* = culong
   mm_mpz_struct* {.byref, pure.} = object 
     mp_alloc*: cint
