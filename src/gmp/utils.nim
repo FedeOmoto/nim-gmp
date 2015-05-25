@@ -30,8 +30,15 @@ proc init_mpz*(enc: string, base: cint = 10): mpz_t =
 converter convert*(a: int): mpz_t =
   when sizeof(clong) != sizeof(int): # LLP64 programming model
     mpz_init(result)
-    if a < 0: result.mp_size = -1 else: result.mp_size = 1
-    result.mp_d[] = a.mp_limb_t
+    if a < 0:
+      result.mp_size = -1
+      if a == low(int):
+        result.mp_d[] = a.mp_limb_t
+      else:
+        result.mp_d[] = (-a).mp_limb_t
+    else:
+      result.mp_size = 1
+      result.mp_d[] = a.mp_limb_t
   else:
     mpz_init_set_si(result, a)
 
