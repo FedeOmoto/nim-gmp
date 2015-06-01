@@ -66,6 +66,14 @@ const
   GMP_RAND_ALG_DEFAULT: gmp_randalg_t = 0.gmp_randalg_t
   GMP_RAND_ALG_LC: gmp_randalg_t = GMP_RAND_ALG_DEFAULT
 
+proc mpq_numref*(a2: mpq_ptr): mpz_ptr {.importc: "mpq_numref",
+    header: "<gmp.h>".}
+proc mpq_numref*(a2: var mpq_t): mpz_ptr {.importc: "mpq_numref",
+    header: "<gmp.h>".}
+proc mpq_denref*(a2: mpq_ptr): mpz_ptr {.importc: "mpq_denref",
+    header: "<gmp.h>".}
+proc mpq_denref*(a2: var mpq_t): mpz_ptr {.importc: "mpq_denref",
+    header: "<gmp.h>".}
 proc mp_set_memory_functions*(a2: proc (a2: csize): pointer; a3: proc (
     a2: pointer; a3: csize; a4: csize): pointer; 
                               a4: proc (a2: pointer; a3: csize)) {.
