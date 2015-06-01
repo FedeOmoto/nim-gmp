@@ -65,6 +65,11 @@ include extratypes
 const 
   GMP_RAND_ALG_DEFAULT: gmp_randalg_t = 0.gmp_randalg_t
   GMP_RAND_ALG_LC: gmp_randalg_t = GMP_RAND_ALG_DEFAULT
+
+proc mpq_numref*(a2: mpq_ptr): mpz_ptr = a2.mp_num.addr
+proc mpq_numref*(a2: var mpq_t): mpz_ptr = mpq_numref(a2.addr)
+proc mpq_denref*(a2: mpq_ptr): mpz_ptr = a2.mp_den.addr
+proc mpq_denref*(a2: var mpq_t): mpz_ptr = mpq_denref(a2.addr)
 proc mp_set_memory_functions*(a2: proc (a2: csize): pointer; a3: proc (
     a2: pointer; a3: csize; a4: csize): pointer; 
                               a4: proc (a2: pointer; a3: csize)) {.
