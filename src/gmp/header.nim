@@ -115,7 +115,7 @@ proc gmp_urandomm_ui*(a2: gmp_randstate_t; a3: culong): culong {.
     importc: "gmp_urandomm_ui", header: "<gmp.h>".}
 proc gmp_asprintf*(a2: cstringArray; a3: cstring): cint {.varargs, 
     importc: "gmp_asprintf", header: "<gmp.h>".}
-proc gmp_fprintf*(a2: ptr FILE; a3: cstring): cint {.varargs, 
+proc gmp_fprintf*(a2: File; a3: cstring): cint {.varargs, 
     importc: "gmp_fprintf", header: "<gmp.h>".}
 proc gmp_printf*(a2: cstring): cint {.varargs, importc: "gmp_printf", 
                                       header: "<gmp.h>".}
@@ -123,7 +123,7 @@ proc gmp_snprintf*(a2: cstring; a3: csize; a4: cstring): cint {.varargs,
     importc: "gmp_snprintf", header: "<gmp.h>".}
 proc gmp_sprintf*(a2: cstring; a3: cstring): cint {.varargs, 
     importc: "gmp_sprintf", header: "<gmp.h>".}
-proc gmp_fscanf*(a2: ptr FILE; a3: cstring): cint {.varargs, 
+proc gmp_fscanf*(a2: File; a3: cstring): cint {.varargs, 
     importc: "gmp_fscanf", header: "<gmp.h>".}
 proc gmp_scanf*(a2: cstring): cint {.varargs, importc: "gmp_scanf", 
                                      header: "<gmp.h>".}
@@ -423,13 +423,13 @@ proc mpz_init_set_ui*(a2: mpz_ptr; a3: culong) {.importc: "mpz_init_set_ui",
     header: "<gmp.h>".}
 proc mpz_init_set_ui*(a2: var mpz_t; a3: culong) {.importc: "mpz_init_set_ui", 
     header: "<gmp.h>".}
-proc mpz_inp_raw*(a2: mpz_ptr; a3: ptr FILE): csize {.importc: "mpz_inp_raw", 
+proc mpz_inp_raw*(a2: mpz_ptr; a3: File): csize {.importc: "mpz_inp_raw", 
     header: "<gmp.h>".}
-proc mpz_inp_raw*(a2: var mpz_t; a3: ptr FILE): csize {.importc: "mpz_inp_raw", 
+proc mpz_inp_raw*(a2: var mpz_t; a3: File): csize {.importc: "mpz_inp_raw", 
     header: "<gmp.h>".}
-proc mpz_inp_str*(a2: mpz_ptr; a3: ptr FILE; a4: cint): csize {.
+proc mpz_inp_str*(a2: mpz_ptr; a3: File; a4: cint): csize {.
     importc: "mpz_inp_str", header: "<gmp.h>".}
-proc mpz_inp_str*(a2: var mpz_t; a3: ptr FILE; a4: cint): csize {.
+proc mpz_inp_str*(a2: var mpz_t; a3: File; a4: cint): csize {.
     importc: "mpz_inp_str", header: "<gmp.h>".}
 proc mpz_invert*(a2: mpz_ptr; a3: mpz_srcptr; a4: mpz_srcptr): cint {.
     importc: "mpz_invert", header: "<gmp.h>".}
@@ -503,13 +503,13 @@ proc mpz_nextprime*(a2: mpz_ptr; a3: mpz_srcptr) {.importc: "mpz_nextprime",
     header: "<gmp.h>".}
 proc mpz_nextprime*(a2: var mpz_t; a3: mpz_t) {.importc: "mpz_nextprime", 
     header: "<gmp.h>".}
-proc mpz_out_raw*(a2: ptr FILE; a3: mpz_srcptr): csize {.importc: "mpz_out_raw", 
+proc mpz_out_raw*(a2: File; a3: mpz_srcptr): csize {.importc: "mpz_out_raw", 
     header: "<gmp.h>".}
-proc mpz_out_raw*(a2: ptr FILE; a3: mpz_t): csize {.importc: "mpz_out_raw", 
+proc mpz_out_raw*(a2: File; a3: mpz_t): csize {.importc: "mpz_out_raw", 
     header: "<gmp.h>".}
-proc mpz_out_str*(a2: ptr FILE; a3: cint; a4: mpz_srcptr): csize {.
+proc mpz_out_str*(a2: File; a3: cint; a4: mpz_srcptr): csize {.
     importc: "mpz_out_str", header: "<gmp.h>".}
-proc mpz_out_str*(a2: ptr FILE; a3: cint; a4: mpz_t): csize {.
+proc mpz_out_str*(a2: File; a3: cint; a4: mpz_t): csize {.
     importc: "mpz_out_str", header: "<gmp.h>".}
 proc mpz_perfect_power_p*(a2: mpz_srcptr): cint {.
     importc: "mpz_perfect_power_p", header: "<gmp.h>".}
@@ -768,9 +768,9 @@ proc mpq_init*(a2: var mpq_t) {.importc: "mpq_init", header: "<gmp.h>".}
 proc mpq_inits*(a2: mpq_ptr) {.varargs, importc: "mpq_inits", header: "<gmp.h>".}
 proc mpq_inits*(a2: var mpq_t) {.varargs, importc: "mpq_inits", 
                                  header: "<gmp.h>".}
-proc mpq_inp_str*(a2: mpq_ptr; a3: ptr FILE; a4: cint): csize {.
+proc mpq_inp_str*(a2: mpq_ptr; a3: File; a4: cint): csize {.
     importc: "mpq_inp_str", header: "<gmp.h>".}
-proc mpq_inp_str*(a2: var mpq_t; a3: ptr FILE; a4: cint): csize {.
+proc mpq_inp_str*(a2: var mpq_t; a3: File; a4: cint): csize {.
     importc: "mpq_inp_str", header: "<gmp.h>".}
 proc mpq_inv*(a2: mpq_ptr; a3: mpq_srcptr) {.importc: "mpq_inv", 
     header: "<gmp.h>".}
@@ -783,9 +783,9 @@ proc mpq_mul_2exp*(a2: mpq_ptr; a3: mpq_srcptr; a4: mp_bitcnt_t) {.
     importc: "mpq_mul_2exp", header: "<gmp.h>".}
 proc mpq_mul_2exp*(a2: var mpq_t; a3: mpq_t; a4: mp_bitcnt_t) {.
     importc: "mpq_mul_2exp", header: "<gmp.h>".}
-proc mpq_out_str*(a2: ptr FILE; a3: cint; a4: mpq_srcptr): csize {.
+proc mpq_out_str*(a2: File; a3: cint; a4: mpq_srcptr): csize {.
     importc: "mpq_out_str", header: "<gmp.h>".}
-proc mpq_out_str*(a2: ptr FILE; a3: cint; a4: mpq_t): csize {.
+proc mpq_out_str*(a2: File; a3: cint; a4: mpq_t): csize {.
     importc: "mpq_out_str", header: "<gmp.h>".}
 proc mpq_set*(a2: mpq_ptr; a3: mpq_srcptr) {.importc: "mpq_set", 
     header: "<gmp.h>".}
@@ -966,9 +966,9 @@ proc mpf_init_set_ui*(a2: mpf_ptr; a3: culong) {.importc: "mpf_init_set_ui",
     header: "<gmp.h>".}
 proc mpf_init_set_ui*(a2: var mpf_t; a3: culong) {.importc: "mpf_init_set_ui", 
     header: "<gmp.h>".}
-proc mpf_inp_str*(a2: mpf_ptr; a3: ptr FILE; a4: cint): csize {.
+proc mpf_inp_str*(a2: mpf_ptr; a3: File; a4: cint): csize {.
     importc: "mpf_inp_str", header: "<gmp.h>".}
-proc mpf_inp_str*(a2: var mpf_t; a3: ptr FILE; a4: cint): csize {.
+proc mpf_inp_str*(a2: var mpf_t; a3: File; a4: cint): csize {.
     importc: "mpf_inp_str", header: "<gmp.h>".}
 proc mpf_integer_p*(a2: mpf_srcptr): cint {.importc: "mpf_integer_p", 
     header: "<gmp.h>".}
@@ -989,9 +989,9 @@ proc mpf_mul_ui*(a2: var mpf_t; a3: mpf_t; a4: culong) {.importc: "mpf_mul_ui",
 proc mpf_neg*(a2: mpf_ptr; a3: mpf_srcptr) {.importc: "mpf_neg", 
     header: "<gmp.h>".}
 proc mpf_neg*(a2: var mpf_t; a3: mpf_t) {.importc: "mpf_neg", header: "<gmp.h>".}
-proc mpf_out_str*(a2: ptr FILE; a3: cint; a4: csize; a5: mpf_srcptr): csize {.
+proc mpf_out_str*(a2: File; a3: cint; a4: csize; a5: mpf_srcptr): csize {.
     importc: "mpf_out_str", header: "<gmp.h>".}
-proc mpf_out_str*(a2: ptr FILE; a3: cint; a4: csize; a5: mpf_t): csize {.
+proc mpf_out_str*(a2: File; a3: cint; a4: csize; a5: mpf_t): csize {.
     importc: "mpf_out_str", header: "<gmp.h>".}
 proc mpf_pow_ui*(a2: mpf_ptr; a3: mpf_srcptr; a4: culong) {.
     importc: "mpf_pow_ui", header: "<gmp.h>".}

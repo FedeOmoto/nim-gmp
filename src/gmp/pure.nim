@@ -111,7 +111,7 @@ proc gmp_urandomm_ui*(a2: gmp_randstate_t; a3: culong): culong {.
     importc: "__gmp_urandomm_ui", dynlib: libgmp, cdecl.}
 proc gmp_asprintf*(a2: cstringArray; a3: cstring): cint {.varargs, 
     importc: "__gmp_asprintf", dynlib: libgmp, cdecl.}
-proc gmp_fprintf*(a2: ptr FILE; a3: cstring): cint {.varargs, 
+proc gmp_fprintf*(a2: File; a3: cstring): cint {.varargs, 
     importc: "__gmp_fprintf", dynlib: libgmp, cdecl.}
 proc gmp_printf*(a2: cstring): cint {.varargs, importc: "__gmp_printf", 
                                       dynlib: libgmp, cdecl.}
@@ -119,7 +119,7 @@ proc gmp_snprintf*(a2: cstring; a3: csize; a4: cstring): cint {.varargs,
     importc: "__gmp_snprintf", dynlib: libgmp, cdecl.}
 proc gmp_sprintf*(a2: cstring; a3: cstring): cint {.varargs, 
     importc: "__gmp_sprintf", dynlib: libgmp, cdecl.}
-proc gmp_fscanf*(a2: ptr FILE; a3: cstring): cint {.varargs, 
+proc gmp_fscanf*(a2: File; a3: cstring): cint {.varargs, 
     importc: "__gmp_fscanf", dynlib: libgmp, cdecl.}
 proc gmp_scanf*(a2: cstring): cint {.varargs, importc: "__gmp_scanf", 
                                      dynlib: libgmp, cdecl.}
@@ -424,13 +424,13 @@ proc mpz_init_set_ui*(a2: mpz_ptr; a3: culong) {.importc: "__gmpz_init_set_ui",
     dynlib: libgmp, cdecl.}
 proc mpz_init_set_ui*(a2: var mpz_t; a3: culong) {.
     importc: "__gmpz_init_set_ui", dynlib: libgmp, cdecl.}
-proc mpz_inp_raw*(a2: mpz_ptr; a3: ptr FILE): csize {.importc: "__gmpz_inp_raw", 
+proc mpz_inp_raw*(a2: mpz_ptr; a3: File): csize {.importc: "__gmpz_inp_raw", 
     dynlib: libgmp, cdecl.}
-proc mpz_inp_raw*(a2: var mpz_t; a3: ptr FILE): csize {.
+proc mpz_inp_raw*(a2: var mpz_t; a3: File): csize {.
     importc: "__gmpz_inp_raw", dynlib: libgmp, cdecl.}
-proc mpz_inp_str*(a2: mpz_ptr; a3: ptr FILE; a4: cint): csize {.
+proc mpz_inp_str*(a2: mpz_ptr; a3: File; a4: cint): csize {.
     importc: "__gmpz_inp_str", dynlib: libgmp, cdecl.}
-proc mpz_inp_str*(a2: var mpz_t; a3: ptr FILE; a4: cint): csize {.
+proc mpz_inp_str*(a2: var mpz_t; a3: File; a4: cint): csize {.
     importc: "__gmpz_inp_str", dynlib: libgmp, cdecl.}
 proc mpz_invert*(a2: mpz_ptr; a3: mpz_srcptr; a4: mpz_srcptr): cint {.
     importc: "__gmpz_invert", dynlib: libgmp, cdecl.}
@@ -504,13 +504,13 @@ proc mpz_nextprime*(a2: mpz_ptr; a3: mpz_srcptr) {.importc: "__gmpz_nextprime",
     dynlib: libgmp, cdecl.}
 proc mpz_nextprime*(a2: var mpz_t; a3: mpz_t) {.importc: "__gmpz_nextprime", 
     dynlib: libgmp, cdecl.}
-proc mpz_out_raw*(a2: ptr FILE; a3: mpz_srcptr): csize {.
+proc mpz_out_raw*(a2: File; a3: mpz_srcptr): csize {.
     importc: "__gmpz_out_raw", dynlib: libgmp, cdecl.}
-proc mpz_out_raw*(a2: ptr FILE; a3: mpz_t): csize {.importc: "__gmpz_out_raw", 
+proc mpz_out_raw*(a2: File; a3: mpz_t): csize {.importc: "__gmpz_out_raw", 
     dynlib: libgmp, cdecl.}
-proc mpz_out_str*(a2: ptr FILE; a3: cint; a4: mpz_srcptr): csize {.
+proc mpz_out_str*(a2: File; a3: cint; a4: mpz_srcptr): csize {.
     importc: "__gmpz_out_str", dynlib: libgmp, cdecl.}
-proc mpz_out_str*(a2: ptr FILE; a3: cint; a4: mpz_t): csize {.
+proc mpz_out_str*(a2: File; a3: cint; a4: mpz_t): csize {.
     importc: "__gmpz_out_str", dynlib: libgmp, cdecl.}
 proc mpz_perfect_power_p*(a2: mpz_srcptr): cint {.
     importc: "__gmpz_perfect_power_p", dynlib: libgmp, cdecl.}
@@ -772,9 +772,9 @@ proc mpq_inits*(a2: mpq_ptr) {.varargs, importc: "__gmpq_inits", dynlib: libgmp,
                                cdecl.}
 proc mpq_inits*(a2: var mpq_t) {.varargs, importc: "__gmpq_inits", 
                                  dynlib: libgmp, cdecl.}
-proc mpq_inp_str*(a2: mpq_ptr; a3: ptr FILE; a4: cint): csize {.
+proc mpq_inp_str*(a2: mpq_ptr; a3: File; a4: cint): csize {.
     importc: "__gmpq_inp_str", dynlib: libgmp, cdecl.}
-proc mpq_inp_str*(a2: var mpq_t; a3: ptr FILE; a4: cint): csize {.
+proc mpq_inp_str*(a2: var mpq_t; a3: File; a4: cint): csize {.
     importc: "__gmpq_inp_str", dynlib: libgmp, cdecl.}
 proc mpq_inv*(a2: mpq_ptr; a3: mpq_srcptr) {.importc: "__gmpq_inv", 
     dynlib: libgmp, cdecl.}
@@ -788,9 +788,9 @@ proc mpq_mul_2exp*(a2: mpq_ptr; a3: mpq_srcptr; a4: mp_bitcnt_t) {.
     importc: "__gmpq_mul_2exp", dynlib: libgmp, cdecl.}
 proc mpq_mul_2exp*(a2: var mpq_t; a3: mpq_t; a4: mp_bitcnt_t) {.
     importc: "__gmpq_mul_2exp", dynlib: libgmp, cdecl.}
-proc mpq_out_str*(a2: ptr FILE; a3: cint; a4: mpq_srcptr): csize {.
+proc mpq_out_str*(a2: File; a3: cint; a4: mpq_srcptr): csize {.
     importc: "__gmpq_out_str", dynlib: libgmp, cdecl.}
-proc mpq_out_str*(a2: ptr FILE; a3: cint; a4: mpq_t): csize {.
+proc mpq_out_str*(a2: File; a3: cint; a4: mpq_t): csize {.
     importc: "__gmpq_out_str", dynlib: libgmp, cdecl.}
 proc mpq_set*(a2: mpq_ptr; a3: mpq_srcptr) {.importc: "__gmpq_set", 
     dynlib: libgmp, cdecl.}
@@ -977,9 +977,9 @@ proc mpf_init_set_ui*(a2: mpf_ptr; a3: culong) {.importc: "__gmpf_init_set_ui",
     dynlib: libgmp, cdecl.}
 proc mpf_init_set_ui*(a2: var mpf_t; a3: culong) {.
     importc: "__gmpf_init_set_ui", dynlib: libgmp, cdecl.}
-proc mpf_inp_str*(a2: mpf_ptr; a3: ptr FILE; a4: cint): csize {.
+proc mpf_inp_str*(a2: mpf_ptr; a3: File; a4: cint): csize {.
     importc: "__gmpf_inp_str", dynlib: libgmp, cdecl.}
-proc mpf_inp_str*(a2: var mpf_t; a3: ptr FILE; a4: cint): csize {.
+proc mpf_inp_str*(a2: var mpf_t; a3: File; a4: cint): csize {.
     importc: "__gmpf_inp_str", dynlib: libgmp, cdecl.}
 proc mpf_integer_p*(a2: mpf_srcptr): cint {.importc: "__gmpf_integer_p", 
     dynlib: libgmp, cdecl.}
@@ -1001,9 +1001,9 @@ proc mpf_neg*(a2: mpf_ptr; a3: mpf_srcptr) {.importc: "__gmpf_neg",
     dynlib: libgmp, cdecl.}
 proc mpf_neg*(a2: var mpf_t; a3: mpf_t) {.importc: "__gmpf_neg", dynlib: libgmp, 
     cdecl.}
-proc mpf_out_str*(a2: ptr FILE; a3: cint; a4: csize; a5: mpf_srcptr): csize {.
+proc mpf_out_str*(a2: File; a3: cint; a4: csize; a5: mpf_srcptr): csize {.
     importc: "__gmpf_out_str", dynlib: libgmp, cdecl.}
-proc mpf_out_str*(a2: ptr FILE; a3: cint; a4: csize; a5: mpf_t): csize {.
+proc mpf_out_str*(a2: File; a3: cint; a4: csize; a5: mpf_t): csize {.
     importc: "__gmpf_out_str", dynlib: libgmp, cdecl.}
 proc mpf_pow_ui*(a2: mpf_ptr; a3: mpf_srcptr; a4: culong) {.
     importc: "__gmpf_pow_ui", dynlib: libgmp, cdecl.}
